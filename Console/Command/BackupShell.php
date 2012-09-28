@@ -48,7 +48,7 @@ class BackupShell extends AppShell {
 			$i++;
 		}
 
-		$chosen = $this->in('Choose a backup file:', array_keys($options));
+		$chosen = $this->in('Choose a Backup file:', array_keys($options));
 
 		$this->out("You chose number $chosen");
 
