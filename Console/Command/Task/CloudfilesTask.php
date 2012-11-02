@@ -9,15 +9,23 @@ class CloudfilesTask extends Shell {
 
 		include(APP.'Plugin/Backup/Vendors/rackspace-cloudfiles/cloudfiles.php');
 
-		// RACKSPACE cloudfiles
-		$auth = new CF_Authentication(Configure::read('backup.cloudfiles.username'), Configure::read('backup.cloudfiles.api_key'), null, UK_AUTHURL);
-		$auth->authenticate();
+		$config = Configure::read('backup.send.cloudfiles');
 
-		$conn = new CF_Connection($auth);
-		$conn->ssl_use_cabundle();
+		try {
 
-		$this->cf = $conn;
-		$this->bucket = $this->cf->get_container('backups');
+			// RACKSPACE cloudfiles
+			$auth = new CF_Authentication($config['username'], $config['api_key'], null, UK_AUTHURL);
+			$auth->authenticate();
+
+			$conn = new CF_Connection($auth);
+			$conn->ssl_use_cabundle();
+
+			$this->cf = $conn;
+			$this->bucket = $this->cf->get_container($config['container']);
+
+		} catch (Exception $e) {
+			return false;
+		}
 	}
 
 	function upload($full_path, $file_name, $containerName) {
@@ -32,9 +40,7 @@ class CloudfilesTask extends Shell {
 	}
 
 	function ls($containerName) {
-
 		$items = $this->bucket->list_objects();
-
 		return $items;
 	}
 

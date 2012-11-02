@@ -2,25 +2,32 @@
 App::uses('AppShell', 'Console/Command');
 class DbTask extends AppShell {
 
-	function dump($ds = null) {
+	function dump($ds = null, $filename = false) {
 
 		if ($ds == null) {
 			$ds = $this->args[0];
 		}
 		$dsc = $this->_config($ds);
 
-		$fn = $dsc['database'].'__'.php_uname('n').'__'.date('Y-m-d-H-i').'.sql';
+		if (!$filename) {
 
-		$tmpFile = TMP.$fn;
+			$name = Configure::read('backup.name');
+			if (!$name) {
+				$name = $dsc['database'];
+			}
 
-		@unlink($tmpFile);
+			$fn = $name.'__'.php_uname('n').'__'.date('Y-m-d-H-i').'.sql';
+			$filename = TMP.$fn;
+		}
+
+		@unlink($filename);
 
 		$this->out('Dumping database: '.$dsc['database']);
 
-		$command = "mysqldump -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} > $tmpFile ";
+		$command = "mysqldump -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} > $filename ";
 		$this->_exec($command);
 
-		return $tmpFile;
+		return $filename;
 	}
 
 	function load($ds, $filename) {
