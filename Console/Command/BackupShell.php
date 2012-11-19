@@ -7,7 +7,7 @@ class BackupShell extends AppShell {
 		'discard' => false
 	);
 
-	var $tasks = array('Backup.Db', 'Backup.Cloudfiles');
+	var $tasks = array('Backup.Db', 'Backup.Cloudfiles', 'Backup.S3');
 
 	function _init() {
 
@@ -54,17 +54,22 @@ class BackupShell extends AppShell {
 			$ds = $this->args[0];
 		}
 
-		$contents = $this->Cloudfiles->bucket->list_objects();
+		$source = $this->S3;
+
+		$contents = $source->ls();
 
 		if (empty($contents)) {
 			$this->out("No backups available");
 			exit();
 		}
 
+//prd($contents);
+
 		$name = Configure::read('backup.name');
-		$contents = preg_grep('/^'.$name.'.*/', $contents);
+//		$contents = preg_grep('/^'.$name.'.*/', $contents);
 
 		$i = 1;
+		$options = array();
 		foreach($contents as $k => $v) {
 			$options[$i] = $v;
 			$this->out("[$i] {$v}");
@@ -77,16 +82,13 @@ class BackupShell extends AppShell {
 
 		$filename = $options[$chosen];
 
-		$file = $this->Cloudfiles->bucket->get_object($filename);
-
-		$filename = preg_replace('/\//', '__', $filename);
+		$fileData = $source->get($filename);
 
 		$path = APP.'tmp/'.$filename;
-		$file->save_to_filename($path);
 
-		// Backup current contents, as a precaution
-		// $this->out("Dumping current local DB...");
-		// $this->Db->dump($ds);
+		$fh = fopen($path, 'w');
+		fwrite($fh, $fileData);
+		fclose($fh);
 
 		$this->out("Loading $filename...");
 
@@ -182,6 +184,11 @@ class BackupShell extends AppShell {
 		$took = time() - $start;
 		$this->out('...upload completed in '.$took.' seconds.', true);
 
+		return true;
+	}
+
+	function send_s3($filename, $options) {
+		$this->S3->upload($filename, basename($filename), $options['bucket']);
 		return true;
 	}
 
