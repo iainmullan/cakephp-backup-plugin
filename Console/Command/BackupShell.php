@@ -166,10 +166,16 @@ class BackupShell extends AppShell {
 	}
 
 	function send_email($filename, $options) {
-		$this->out('Emailing to '.$options['to'].'...', true);
+		$to = $options['to'];
+		if (!is_array($to)) {
+			$to = array($to);
+		}
+
+		$this->out('Emailing to '.implode(',',$to).'...', true);
+
 		$email = new CakeEmail();
 		$email->from($options['from']);
-		$email->to($options['to']);
+		$email->to($to);
 		$email->subject($options['subject']);
 		$email->attachments($filename);
 		$email->send('Backup attached');
@@ -188,7 +194,11 @@ class BackupShell extends AppShell {
 	}
 
 	function send_s3($filename, $options) {
+		$this->out('Uploading to S3...', true);
+		$start = time();
 		$this->S3->upload($filename, basename($filename), $options['bucket']);
+		$took = time() - $start;
+		$this->out('...upload completed in '.$took.' seconds.', true);
 		return true;
 	}
 
