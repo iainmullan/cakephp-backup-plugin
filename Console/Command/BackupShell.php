@@ -124,12 +124,19 @@ class BackupShell extends AppShell {
 			$ds = $this->args[0];
 		}
 
-		$filename = $this->Db->dump($ds);
+		$fn = Configure::read('backup.name').'_'.Configure::read('app.env').'_'.date('Y-m-d').'.sql';
+
+		$filename = $this->Db->dump($ds, $fn);
+		$oldFile = Configure::read('backup.name').'_'.Configure::read('app.env').'_'.date('Y-m-d', strtotime('-7 days')).'.sql';
+
+		$this->out('Dumped file: '.$filename);
 
 		if (Configure::read('backup.compress')) {
 			$this->create_zip(array($filename), $filename.'.zip');
 			$filename = $filename.'.zip';
+			$oldFile = $oldFile.'.zip';
 		}
+
 
 		$send = Configure::read('backup.send');
 		if ($send) {
@@ -138,14 +145,14 @@ class BackupShell extends AppShell {
 
 				$method = 'send_'.$type;
 				if (method_exists($this, $method)) {
-					$this->$method($filename, $options);
+					$this->$method($filename, $options, $oldFile);
 				}
 
 			}
 
 			$this->out('Backup complete.', true);
 		} else {
-			// it has been sent anywhere, force a local save
+			// it hasn't been sent anywhere, force a local save
 			if (!Configure::read('backup.dir')) {
 				Configure::write('backup.dir', APP.'backups/');
 			}
@@ -193,11 +200,17 @@ class BackupShell extends AppShell {
 		return true;
 	}
 
-	function send_s3($filename, $options) {
+	function send_s3($filename, $options, $oldFileToDelete = false) {
 		$this->out('Uploading to S3...', true);
 		$start = time();
 		$this->S3->upload($filename, basename($filename), $options['bucket']);
 		$took = time() - $start;
+
+		if ($oldFileToDelete) {
+			$this->out('Deleting old backup: '.$oldFileToDelete, true);
+			$this->S3->delete($oldFileToDelete, $options['bucket']);
+		}
+
 		$this->out('...upload completed in '.$took.' seconds.', true);
 		return true;
 	}

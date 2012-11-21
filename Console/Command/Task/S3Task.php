@@ -34,6 +34,11 @@ class S3Task extends Shell {
 		return $result;
 	}
 
+	function delete($filename, $bucketName) {
+		$result = $this->s3->delete_object($bucketName, $filename);
+		return $result;
+	}
+
 	function ls() {
 		$result = $this->s3->list_objects($this->config['bucket']);
 
