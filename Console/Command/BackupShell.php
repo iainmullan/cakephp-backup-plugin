@@ -137,7 +137,6 @@ class BackupShell extends AppShell {
 			$oldFile = $oldFile.'.zip';
 		}
 
-
 		$send = Configure::read('backup.send');
 		if ($send) {
 
@@ -170,6 +169,7 @@ class BackupShell extends AppShell {
 			unlink($filename);
 		}
 
+		$this->mailOutput("Destination Influence Backup Complete");
 	}
 
 	function send_email($filename, $options) {
