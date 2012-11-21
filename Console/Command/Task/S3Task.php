@@ -14,7 +14,8 @@ class S3Task extends Shell {
 
 		$this->s3 = new AmazonS3(array(
 			'key' => $config['key'],
-			'secret' => $config['secret']
+			'secret' => $config['secret'],
+			'certificate_authority' => true
 		));
 	}
 
