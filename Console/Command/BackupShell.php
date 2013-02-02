@@ -54,7 +54,7 @@ class BackupShell extends AppShell {
 			$ds = $this->args[0];
 		}
 
-		$source = $this->S3;
+		$source = $this->Cloudfiles;
 
 		$contents = $source->ls();
 
