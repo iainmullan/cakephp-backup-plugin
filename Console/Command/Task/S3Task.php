@@ -8,7 +8,7 @@ class S3Task extends Shell {
 	function __construct($a) {
 		parent::__construct($a);
 
-		$config = Configure::read('backup.send.s3');
+		$config = Configure::read('backup.sources.S3');
 
 		$this->config = $config;
 
@@ -28,7 +28,7 @@ class S3Task extends Shell {
 		);
 
 		$bucketName = $this->config['bucket'];//.".s3-eu-west-1.amazonaws.com";
-
+		
 		$result = $this->s3->create_object($bucketName, $destinationPath, $object);
 
 		return $result;

@@ -9,7 +9,7 @@ class CloudfilesTask extends Shell {
 
 		include(APP.'Plugin/Backup/Vendors/rackspace-cloudfiles/cloudfiles.php');
 
-		$config = Configure::read('backup.send.cloudfiles');
+		$config = Configure::read('backup.sources.cloudfiles');
 
 		try {
 

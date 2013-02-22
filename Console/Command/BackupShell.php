@@ -17,9 +17,6 @@ class BackupShell extends AppShell {
 			$this->_config = array_merge($this->_config, $config);
 		}
 
-		$this->out("Config is ");
-		pr($this->_config);
-
 	}
 
 	function main() {
@@ -54,19 +51,19 @@ class BackupShell extends AppShell {
 			$ds = $this->args[0];
 		}
 
-		$source = $this->Cloudfiles;
+		$source = $this->{Configure::read('backup.source')};
 
 		$contents = $source->ls();
 
+		$name = Configure::read('backup.name');
+		$contents = preg_grep('/^'.$name.'.*/', $contents);
+
 		if (empty($contents)) {
-			$this->out("No backups available");
+			$this->out("No backups available for ".$name);
+			$this->out();
 			exit();
 		}
 
-//prd($contents);
-
-		$name = Configure::read('backup.name');
-//		$contents = preg_grep('/^'.$name.'.*/', $contents);
 
 		$i = 1;
 		$options = array();
@@ -137,16 +134,16 @@ class BackupShell extends AppShell {
 			$oldFile = $oldFile.'.zip';
 		}
 
-		$send = Configure::read('backup.send');
-		if ($send) {
+		$sources = Configure::read('backup.sources');
+		if ($sources) {
 
-			foreach($send as $type => $options) {
-
-				$method = 'send_'.$type;
-				if (method_exists($this, $method)) {
-					$this->$method($filename, $options, $oldFile);
+			foreach($sources as $type => $options) {
+				if ($options['enabled']) {
+					$method = 'send_'.$type;
+					if (method_exists($this, $method)) {
+						$this->$method($filename, $options, $oldFile);
+					}					
 				}
-
 			}
 
 			$this->out('Backup complete.', true);
@@ -169,7 +166,7 @@ class BackupShell extends AppShell {
 			unlink($filename);
 		}
 
-		$this->mailOutput("Destination Influence Backup Complete");
+		$this->mailOutput(Configure::read('site.name')." Backup Complete");
 	}
 
 	function send_email($filename, $options) {
@@ -191,17 +188,17 @@ class BackupShell extends AppShell {
 	function send_cloudfiles($filename, $options) {
 		$remoteName = preg_replace('/__/', '/', basename($filename));
 
-		$this->out('Uploading to Cloudfiles...', true);
+		$this->out('Sending to Cloudfiles...', true);
 		$start = time();
 		$this->Cloudfiles->upload($filename, $remoteName, $options['container']);
 		$took = time() - $start;
-		$this->out('...upload completed in '.$took.' seconds.', true);
+		$this->out('...send completed in '.$took.' seconds.', true);
 
 		return true;
 	}
 
 	function send_s3($filename, $options, $oldFileToDelete = false) {
-		$this->out('Uploading to S3...', true);
+		$this->out('Sending to S3...', true);
 		$start = time();
 		$this->S3->upload($filename, basename($filename), $options['bucket']);
 		$took = time() - $start;
@@ -211,7 +208,7 @@ class BackupShell extends AppShell {
 			$this->S3->delete($oldFileToDelete, $options['bucket']);
 		}
 
-		$this->out('...upload completed in '.$took.' seconds.', true);
+		$this->out('...send completed in '.$took.' seconds.', true);
 		return true;
 	}
 
