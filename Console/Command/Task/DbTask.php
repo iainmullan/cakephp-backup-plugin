@@ -24,7 +24,7 @@ class DbTask extends AppShell {
 
 		$this->out('Dumping database: '.$dsc['database']);
 
-		$command = "/Applications/MAMP/Library/bin/mysqldump -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} > $filename ";
+		$command = "/usr/bin/mysqldump -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} > $filename ";
 		$this->_exec($command);
 
 		return $filename;
@@ -32,7 +32,7 @@ class DbTask extends AppShell {
 
 	function load($ds, $filename) {
 		$dsc = $this->_config($ds);
-		$command = "/Applications/MAMP/Library/bin/mysql -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} < $filename ";
+		$command = "/usr/bin/mysql -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} < $filename ";
 		$this->_exec($command);
 	}
 
