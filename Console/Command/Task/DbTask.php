@@ -1,6 +1,16 @@
 <?php
 App::uses('AppShell', 'Console/Command');
 class DbTask extends AppShell {
+	
+	var $mysqlBinDir = '';
+	var $commandLineArgs = '';
+	
+	function __construct() {
+		parent::__construct();
+		if (Configure::read('backup.mysql_bin_dir')) {
+			$mysqlBinDir = Configure::read('backup.mysql_bin_dir');
+		}
+	}
 
 	function dump($ds = null, $filename = false) {
 
@@ -23,8 +33,15 @@ class DbTask extends AppShell {
 		@unlink($filename);
 
 		$this->out('Dumping database: '.$dsc['database']);
+		
+		$password = '';
+		if (!empty($dsc['password'])) {
+			$password = "-p{$dsc['password']}";
+		}
 
-		$command = "/usr/bin/mysqldump -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} > $filename ";
+		$command = $this->mysqlBinDir."mysqldump -u {$dsc['login']} $password {$dsc['database']} > $filename ";
+		$this->out($command);
+		
 		$this->_exec($command);
 
 		return $filename;
@@ -32,7 +49,13 @@ class DbTask extends AppShell {
 
 	function load($ds, $filename) {
 		$dsc = $this->_config($ds);
-		$command = "/usr/bin/mysql -u {$dsc['login']} -p{$dsc['password']} {$dsc['database']} < $filename ";
+		
+		$password = '';
+		if (!empty($dsc['password'])) {
+			$password = "-p{$dsc['password']}";
+		}
+		
+		$command = $this->mysqlBinDir."mysql -u {$dsc['login']} $password {$dsc['database']} < $filename ";
 		$this->_exec($command);
 	}
 
