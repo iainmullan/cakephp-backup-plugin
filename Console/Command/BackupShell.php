@@ -130,6 +130,7 @@ class BackupShell extends AppShell {
 
 		if (Configure::read('backup.compress')) {
 			$this->create_zip(array($filename), $filename.'.zip');
+			unlink($filename);
 			$filename = $filename.'.zip';
 			$oldFile = $oldFile.'.zip';
 		}
@@ -142,7 +143,7 @@ class BackupShell extends AppShell {
 					$method = 'send_'.$type;
 					if (method_exists($this, $method)) {
 						$this->$method($filename, $options, $oldFile);
-					}					
+					}
 				}
 			}
 
@@ -169,12 +170,12 @@ class BackupShell extends AppShell {
 //		$this->mailOutput(Configure::read('site.name')." Backup Complete");
 		$this->notify();
 	}
-	
+
 	function notify() {
-		
+
 		include_once(APP.'Plugin/Backup/Vendors/aws/sdk.class.php');
 		include_once(APP.'Plugin/Backup/Vendors/aws/services/sns.class.php');
-		
+
 		$config = Configure::read('backup.alerts.sns');
 		$sns = new AmazonSNS(array(
 			'key' => $config['key'],
@@ -183,9 +184,9 @@ class BackupShell extends AppShell {
 		));
 
 		$message = Configure::read('site.name')." Backup Complete";
-		
+
 		$arn = $config['arn'];
-		
+
 		$r = $sns->publish($arn, $message);
 	}
 
