@@ -1,3 +1,136 @@
+CHANGELOG for the AWS SDK for PHP 1.x
+=====================================
+
+1.6.2 (2013-03-15)
+------------------
+
+* Added support for viewing and downloading DB log files to the Amazon RDS client.
+* Fixed an issue in the Amazon EC2 service description that was affecting the use of the new `modify_vpc_attribute` and
+  `describe_vp_attribute` operations.
+
+1.6.1 (2013-03-11)
+------------------
+
+* Added support for enabling DNS Hostnames and disabling DNS Resolution (for Amazon VPC) in the Amazon EC2 client.
+* Added support for enumerating account attributes in the Amazon EC2 client.
+* Added support for copying AMIs across regions in the Amazon EC2 client.
+* Added support for event notification subscriptions in the Amazon RDS client.
+* Added support for cancelling stack updates in the AWS CloudFormation client.
+* Resolved an issue where the `restore_archived_object` method in the Amazon S3 client was not working properly.
+* Resolved an issue where in some cases the `get_object_list` method of the Amazon S3 client was causing errors.
+
+----
+
+**Note**: The formatting of the CHANGELOG below is different from that above.
+
+----
+
+# Changelog: 1.6.0
+
+Launched Monday, January 21, 2013.
+
+## Fixes and Enhancements
+* Updated SignatureV4 to work with Amazon SQS and endpoints containing paths in the URL.
+* Made it possible to disable config auto-discovery by defining the `AWS_DISABLE_CONFIG_AUTO_DISCOVERY` constant before requiring the SDK.
+* Updated regional support across the entire SDK. Added some missing region constants for the Asia Pacific (Sydney) Region and the US GovCloud region.
+* Made minor API documentation updates across the entire SDK.
+* Simplified and shortened the user agent string sent with requests from the SDK.
+* Updated copyright notices across the entire SDK to include 2013.
+
+## Services
+### AmazonAS
+* **BACKWARDS-INCOMPATIBLE CHANGE:** The `AvailabilityZones` parameter is no longer required for the `create_auto_scaling_group` operation.
+* **New:** Support for the `EbsOptimized` parameter on the `create_launch_configuration` operation has been added to the SDK.
+
+### AmazonEC2
+* **BACKWARDS-INCOMPATIBLE CHANGE:** The `PublicIp` parameter is no longer required for the `disassociate_address` operation.
+* **BACKWARDS-INCOMPATIBLE CHANGE:** The `AdditionalInfo` parameter has been removed from the `start_instances` operation. It was previously deprecated and unused.
+* **New:** Support for copying Amazon EBS snapshots has been added to the SDK.
+* **New:** New instance type constants for the new high memory and high storage instance types have been added to the SDK.
+* **New:** Support for pagination on the `describe_reserved_instances_offerings` operation has been added to the SDK.
+* **Deprecated:** The `AddressingType` parameter of the `request_spot_instances` operation has been marked as deprecated.
+
+### AmazonElastiCache
+* **BACKWARDS-INCOMPATIBLE CHANGE:** The `CacheSecurityGroupNames` parameter is no longer required for the `create_cache_cluster` operation.
+* **New:** Support for VPC in Amazon ElastiCache has been added to the SDK.
+
+### AmazonElasticBeanstalk
+* **New:** Requests to this service are now signed with Signature V4.
+
+### AmazonEMR
+* **New:** Support for AWS Identity and Access Management (IAM) Roles for Amazon Elastic MapReduce has been added to the SDK.
+
+### AmazonRDS
+* **New:** Support for promoting a Read Replica to a standard DB Instance has been added to the SDK.
+* **New:** Support for provisioned IOPS in Amazon RDS has been added to the SDK.
+
+### AmazonSQS
+* **New:** Requests to this service are now signed with Signature V4.
+
+### AmazonStorageGateway
+* **New:** Support for gateway-cached storage volumes has been added to the SDK.
+
+### AmazonSTS
+* **New:** Support for cross-account API access with IAM roles using the AWS Security Token Service has been added to the SDK.
+
+----
+
+# Changelog: 1.5.17.1
+
+Launched Monday, November 26, 2012.
+
+## Bug fixes and enhancements
+* **Fixed:** Resolved an issue where large responses from Amazon DynamoDB were triggering unnecessary request retries.
+
+## Services
+### AmazonDynamoDB
+* **New:** Support for the South American (São Paulo) Region has been added to Amazon DynamoDB.
+* **New:** Support for archiving data to Amazon Glacier has been added to the SDK.
+
+----
+
+# Changelog: 1.5.17
+
+Launched Tuesday, November 13, 2012.
+
+## Bug fixes and enhancements
+* **New:** Support for the new Asia Pacific (Sydney) Region has been added. Region endpoint constants have been added to several clients.
+
+## Services
+### AmazonDynamoDB
+* **New:** Support for ConsistentRead option on the BatchWriteItem operation has been added to the SDK.
+* **New:** Support for CRC32 checksums has been added to the SDK. Requests are automatically retried on the if there is a checksum mismatch on the response.
+
+### AmazonElasticBeanstalk
+* **New:** Support for the TerminateEnvByForce option on the DeleteApplication operation has been added to the SDK.
+
+### AmazonS3
+* **New:** Support for website page redirects has been added to the SDK.
+* **New:** Support for archiving data to Amazon Glacier has been added to the SDK.
+
+----
+
+# Changelog: 1.5.16.1 "Rhapsody"
+The pre-cursor to Mac OS X, built from technology acquired from NeXT. <http://en.wikipedia.org/wiki/Rhapsody_(operating_system)>
+
+Launched Monday, November 12, 2012.
+
+## Bug fixes and enhancements
+* **Fixed:** The Amazon SQS client now uses the correct API version.
+
+----
+
+# Changelog: 1.5.16 "Rhapsody"
+The pre-cursor to Mac OS X, built from technology acquired from NeXT. <http://en.wikipedia.org/wiki/Rhapsody_(operating_system)>
+
+Launched Friday, November 09, 2012.
+
+## Services
+### AmazonSQS
+* **New:** Support for Long Polling in SQS has been added to the SDK.
+
+----
+
 # Changelog: 1.5.15 "Quixote"
 "Rocinante" (Don Quixote's horse) was the code name for the PowerMac Upgrade enabler. <http://applemuseum.bott.org/sections/codenames.html>
 

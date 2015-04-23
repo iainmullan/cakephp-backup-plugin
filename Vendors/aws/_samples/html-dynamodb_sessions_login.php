@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 	In order to run this sample, I'll assume a few things:
 
 	* You already have a valid Amazon Web Services developer account, and are
-	  signed up to use Amazon DynamoDB <http://aws.amazon.com/simpledb>.
+	  signed up to use Amazon DynamoDB <http://aws.amazon.com/dynamodb>.
 
 	* You already understand the fundamentals of object-oriented PHP.
 

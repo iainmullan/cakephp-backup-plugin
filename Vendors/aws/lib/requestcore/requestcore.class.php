@@ -161,6 +161,11 @@ class RequestCore
 	 */
 	public $allow_set_time_limit = true;
 
+	/**
+	 * Whether or not to use gzip encoding via CURLOPT_ENCODING
+	 */
+	public $use_gzip_enconding = true;
+
 
 	/*%******************************************************************************************%*/
 	// CONSTANTS
@@ -618,7 +623,6 @@ class RequestCore
 		curl_setopt($curl_handle, CURLOPT_URL, $this->request_url);
 		curl_setopt($curl_handle, CURLOPT_FILETIME, true);
 		curl_setopt($curl_handle, CURLOPT_FRESH_CONNECT, false);
-		curl_setopt($curl_handle, CURLOPT_CLOSEPOLICY, CURLCLOSEPOLICY_LEAST_RECENTLY_USED);
 		curl_setopt($curl_handle, CURLOPT_MAXREDIRS, 5);
 		curl_setopt($curl_handle, CURLOPT_HEADER, true);
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
@@ -686,7 +690,7 @@ class RequestCore
 		}
 
 		// Handle the encoding if we can.
-		if (extension_loaded('zlib'))
+		if ($this->use_gzip_enconding && extension_loaded('zlib'))
 		{
 			curl_setopt($curl_handle, CURLOPT_ENCODING, 'gzip, deflate');
 		}
