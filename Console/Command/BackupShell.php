@@ -44,7 +44,11 @@ class BackupShell extends AppShell {
 
 	}
 
-	function restore() {
+	function latest() {
+		$this->restore(false);
+	}
+
+	function restore($choose = true) {
 
 		$ds = 'default';
 		if (isset($this->args[0])) {
@@ -73,7 +77,11 @@ class BackupShell extends AppShell {
 			$i++;
 		}
 
-		$chosen = $this->in('Choose a Backup File:', array_keys($options));
+		if ($choose) {
+			$chosen = $this->in('Choose a Backup File:', array_keys($options));
+		} else {
+			$chosen = $i - 1;
+		}
 
 		$this->out("You chose number $chosen");
 
