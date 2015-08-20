@@ -28,14 +28,25 @@ class S3Task extends Shell {
 		);
 
 		$bucketName = $this->config['bucket'];//.".s3-eu-west-1.amazonaws.com";
-		
+
 		$result = $this->s3->create_object($bucketName, $destinationPath, $object);
+
+		if ($result->header['_info']['http_code'] < 200 ||
+			$result->header['_info']['http_code'] > 399) {
+			return FALSE;
+		}
 
 		return $result;
 	}
 
 	function delete($filename, $bucketName) {
 		$result = $this->s3->delete_object($bucketName, $filename);
+
+		if ($result->header['_info']['http_code'] < 200 ||
+			$result->header['_info']['http_code'] > 399) {
+			return FALSE;
+		}
+
 		return $result;
 	}
 

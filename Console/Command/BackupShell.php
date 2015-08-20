@@ -68,7 +68,6 @@ class BackupShell extends AppShell {
 			exit();
 		}
 
-
 		$i = 1;
 		$options = array();
 		foreach($contents as $k => $v) {
@@ -229,12 +228,22 @@ class BackupShell extends AppShell {
 	function send_s3($filename, $options, $oldFileToDelete = false) {
 		$this->out('Sending to S3...', true);
 		$start = time();
-		$this->S3->upload($filename, basename($filename), $options['bucket']);
+		$response = $this->S3->upload($filename, basename($filename), $options['bucket']);
 		$took = time() - $start;
+
+		if ($response === FALSE) {
+			$this->out("ERROR: upload failed");
+			exit(1);
+		}
 
 		if ($oldFileToDelete) {
 			$this->out('Deleting old backup: '.$oldFileToDelete, true);
 			$this->S3->delete($oldFileToDelete, $options['bucket']);
+
+			if ($response === FALSE) {
+				$this->out("ERROR: delete of old backup failed");
+			}
+
 		}
 
 		$this->out('...send completed in '.$took.' seconds.', true);
