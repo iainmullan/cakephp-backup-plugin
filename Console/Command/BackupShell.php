@@ -175,16 +175,30 @@ class BackupShell extends AppShell {
 			unlink($filename);
 		}
 
-//		$this->mailOutput(Configure::read('site.name')." Backup Complete");
 		$this->notify();
 	}
 
 	function notify() {
 
+		$alerts = Configure::read('backup.alerts');
+
+		foreach($alerts as $type => $config) {
+			echo "Alert via ".$type;
+			$method = "notify_$type";
+			$this->$method($config);
+		}
+
+	}
+
+	function notify_email($config) {
+		$message = Configure::read('site.name')." Backup Complete";
+	}
+
+	function notify_sns($config) {
+
 		include_once(APP.'Plugin/Backup/Vendors/aws/sdk.class.php');
 		include_once(APP.'Plugin/Backup/Vendors/aws/services/sns.class.php');
 
-		$config = Configure::read('backup.alerts.sns');
 		$sns = new AmazonSNS(array(
 			'key' => $config['key'],
 			'secret' => $config['secret'],
