@@ -39,7 +39,7 @@ class DbTask extends AppShell {
 			$password = "-p{$dsc['password']}";
 		}
 
-		$command = $this->mysqlBinDir."mysqldump -u {$dsc['login']} $password {$dsc['database']} > $filename ";
+		$command = $this->mysqlBinDir."mysqldump -h {$dsc['host']} -u {$dsc['login']} $password {$dsc['database']} > $filename ";
 		$this->out($command);
 
 		$this->_exec($command);
